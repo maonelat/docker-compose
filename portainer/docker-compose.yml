@@ -10,6 +10,7 @@ services:
       - "9443:9443"
       - "8000:8000"
     volumes:
+      - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock  # Mount Docker socket for management
     labels:
       - "traefik.enable=true"
@@ -21,3 +22,5 @@ networks:
   default:
     external:
       name: traefik_network
+volumes:
+  portainer_data:
