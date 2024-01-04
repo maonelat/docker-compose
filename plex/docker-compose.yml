@@ -1,0 +1,28 @@
+version: "3.8"  # Specify a compatible version
+
+services:
+  plex:
+    image: plexinc/pms-docker  # The official Plex image
+    container_name: plex
+    restart: unless-stopped  # Ensure automatic restarts
+    network_mode: host  # Use host networking for simplicity
+    environment:
+      - TZ=Africa/Johannesburg  # Set your timezone
+      # - PLEX_CLAIM="<your_claim_token>"  # Optional for claiming server
+    volumes:
+      - /home/loyiso/docker/plex/config:/config  # Mount config directory for persistence
+      - /home/loyiso/docker/plex/transcodes:/transcode  # Mount transcode directory
+      - /storage/media:/data  # Mount media library
+    ports:  # Expose necessary ports (optional for host networking)
+      - "32400:32400"  # Plex server
+      - "3005:3005"  # Plex companion app
+      - "8324:8324"  # Plex DLNA
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex-router.entrypoints=web
+      - traefik.http.routers.plex-router.rule=Host(`host`)
+      - traefik.http.services.plex-service.loadbalancer.server.port=32400
+networks:
+  default:
+    external: true
+    name: traefik_network  # Assuming your Traefik network is named "traefik_network"
